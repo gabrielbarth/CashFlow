@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CashFlow</string>
+    <string name="button_text_current_balance">Saldo atual</string>
+    <string name="button_text_statement">Histórico</string>
+    <string name="button_text_add">Adicionar</string>
 </resources>
