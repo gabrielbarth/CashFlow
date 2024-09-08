@@ -119,10 +119,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun validate(): Boolean {
-        if (binding.editTextValue.text.isEmpty() == null ||
-            binding.editTextDate.text.isEmpty() == null
+        if (binding.editTextValue.text.isEmpty() ||
+            binding.editTextDate.text.isEmpty()
         ) {
-            Toast.makeText(this, "Preencha todos os dados!", Toast.LENGTH_LONG).show()
+            showValidationModal()
             return false
         }
         return true
@@ -150,6 +150,8 @@ class MainActivity : AppCompatActivity() {
                 )
             )
             Toast.makeText(this, "Lançado com sucesso!", Toast.LENGTH_LONG).show()
+            binding.editTextValue.text.clear()
+            binding.editTextDate.text.clear()
         }
     }
 
@@ -167,6 +169,18 @@ class MainActivity : AppCompatActivity() {
             dialog.dismiss()
         }
 
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showValidationModal() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Preencha todos os dados!")
+        builder.setMessage("Por favor, preencha todos os dados para adicionar o seu lançamento.")
+
+        builder.setNegativeButton("Ok") { dialog, which ->
+            dialog.dismiss()
+        }
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
