@@ -1,11 +1,11 @@
 package com.gabrielbarth.cashflow.ui
 
-import android.app.AlertDialog
 import com.gabrielbarth.cashflow.databinding.ActivityMainBinding
 import com.gabrielbarth.cashflow.database.DatabaseHandler
 import com.gabrielbarth.cashflow.entity.FinancialTransaction
 import com.gabrielbarth.cashflow.R
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -20,8 +20,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-
-
 import java.text.NumberFormat
 import java.util.Locale
 
