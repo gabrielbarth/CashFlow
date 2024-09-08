@@ -3,4 +3,7 @@
     <string name="button_text_current_balance">Saldo atual</string>
     <string name="button_text_statement">Histórico</string>
     <string name="button_text_add">Adicionar</string>
+    <string name="buttom_remove_content_description">Remover</string>
+    <string name="image_transaction_type_content_description">Tipo da transação</string>
+    <string name="button_add_content_description">Adicionar novo Lançamento</string>
 </resources>
