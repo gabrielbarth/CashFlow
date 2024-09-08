@@ -1,9 +1,12 @@
-package com.gabrielbarth.cashflow
+package com.gabrielbarth.cashflow.ui
 
 import com.gabrielbarth.cashflow.databinding.ActivityMainBinding
 import com.gabrielbarth.cashflow.database.DatabaseHandler
+import com.gabrielbarth.cashflow.entity.FinancialTransaction
+import com.gabrielbarth.cashflow.R
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,23 +14,26 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+
+
 import java.text.NumberFormat
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMainBinding
-    private lateinit var database : DatabaseHandler
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var database: DatabaseHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate( layoutInflater )
-        setContentView(binding.root )
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -35,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        database = DatabaseHandler(this )
+        database = DatabaseHandler(this)
 
         loadSpinnerTypeData()
         loadEditTextValue()
@@ -112,35 +118,58 @@ class MainActivity : AppCompatActivity() {
         dateDialog.show()
     }
 
+
+    private fun validate(): Boolean {
+        if (binding.editTextValue.text.isEmpty() == null ||
+            binding.editTextDate.text.isEmpty() == null
+        ) {
+            Toast.makeText(this, "Preencha todos os dados!", Toast.LENGTH_LONG).show()
+            return false
+        }
+        return true
+    }
+
+    private fun parseCurrency(currencyString: String): Double {
+        val cleanedString = currencyString
+            .replace("R$", "")
+            .replace(" ", "")
+            .replace(",", ".")
+            .replace("\\s".toRegex(), "")
+        return cleanedString.toDoubleOrNull() ?: 0.0
+    }
+
     fun handleAdd(view: View) {
         logger()
+
+        if (validate()) {
+            database.insert(
+                FinancialTransaction(
+                    type = binding.spinnerType.selectedItem.toString(),
+                    detail = binding.spinnerDetail.selectedItem.toString(),
+                    amount = parseCurrency(binding.editTextValue.text.toString()),
+                    date = binding.editTextDate.text.toString(),
+                )
+            )
+            Toast.makeText(this, "Lançado com sucesso!", Toast.LENGTH_LONG).show()
+        }
     }
 
     fun handleNavigateToStatement(view: View) {
-        logger()
+        val intent = Intent(this, ListActivity::class.java)
+        startActivity(intent)
     }
 
     fun handleShowCurrentBalance(view: View) {
         logger()
     }
 
-    data class Register(
-        val type: String,
-        val detail: String,
-        val value: String,
-        val date: String,
-    )
-
     private fun logger() {
-        val myObject = Register(
+        val myObject = FinancialTransaction(
             type = binding.spinnerType.selectedItem.toString(),
             detail = binding.spinnerDetail.selectedItem.toString(),
-            value = binding.editTextValue.text.toString(),
+            amount = parseCurrency(binding.editTextValue.text.toString()),
             date = binding.editTextDate.text.toString(),
         )
-
         Log.d("Register", myObject.toString())
     }
-
-
 }
