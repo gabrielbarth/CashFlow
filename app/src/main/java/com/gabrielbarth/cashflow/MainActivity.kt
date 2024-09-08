@@ -1,5 +1,8 @@
 package com.gabrielbarth.cashflow
 
+import com.gabrielbarth.cashflow.databinding.ActivityMainBinding
+import com.gabrielbarth.cashflow.database.DatabaseHandler
+
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
@@ -8,10 +11,6 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,30 +20,22 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var main: LinearLayout
-    private lateinit var spinnerType: Spinner
-    private lateinit var spinnerDetail: Spinner
-    private lateinit var editTextValue: EditText
-    private lateinit var editTextDate: EditText
-    private lateinit var imageButtonDate: ImageButton
-
+    private lateinit var binding : ActivityMainBinding
+    private lateinit var database : DatabaseHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate( layoutInflater )
+        setContentView(binding.root )
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        main = findViewById(R.id.main)
-        spinnerType = findViewById(R.id.spinnerType)
-        spinnerDetail = findViewById(R.id.spinnerDetail)
-        editTextValue = findViewById(R.id.editTextValue)
-        editTextDate = findViewById(R.id.editTextDate)
-        imageButtonDate = findViewById(R.id.imageButtonDate)
+        database = DatabaseHandler(this )
 
         loadSpinnerTypeData()
         loadEditTextValue()
@@ -53,16 +44,16 @@ class MainActivity : AppCompatActivity() {
     private fun loadSpinnerTypeData() {
         val options: List<String> = listOf<String>("Débito", "Crédito")
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, options)
-        spinnerType.setAdapter(adapter)
+        binding.spinnerType.setAdapter(adapter)
 
-        spinnerType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spinnerType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View,
                 position: Int,
                 id: Long
             ) {
-                loadSpinnerDetailsData(spinnerType.selectedItem.toString())
+                loadSpinnerDetailsData(binding.spinnerType.selectedItem.toString())
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -77,11 +68,11 @@ class MainActivity : AppCompatActivity() {
         val options = if (selectedOption == "Crédito") creditOptions else debitOptions
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, options)
-        spinnerDetail.setAdapter(adapter)
+        binding.spinnerDetail.setAdapter(adapter)
     }
 
     private fun loadEditTextValue() {
-        editTextValue.addTextChangedListener(object : TextWatcher {
+        binding.editTextValue.addTextChangedListener(object : TextWatcher {
             private var current = ""
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -90,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() != current) {
-                    editTextValue.removeTextChangedListener(this)
+                    binding.editTextValue.removeTextChangedListener(this)
 
                     val cleanString = s.toString().replace("[R$,.\\s]".toRegex(), "")
                     val parsed = cleanString.toDoubleOrNull() ?: 0.0
@@ -98,10 +89,10 @@ class MainActivity : AppCompatActivity() {
                         NumberFormat.getCurrencyInstance(Locale("pt", "BR")).format(parsed / 100)
 
                     current = formatted
-                    editTextValue.setText(formatted)
-                    editTextValue.setSelection(formatted.length)
+                    binding.editTextValue.setText(formatted)
+                    binding.editTextValue.setSelection(formatted.length)
 
-                    editTextValue.addTextChangedListener(this)
+                    binding.editTextValue.addTextChangedListener(this)
                 }
             }
         })
@@ -113,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
                 val dateFormatted = "${selectedDay}/${selectedMonth + 1}/${selectedYear}"
-                editTextDate.setText(dateFormatted)
+                binding.editTextDate.setText(dateFormatted)
             },
             2024, 8, 5
         )
@@ -142,10 +133,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun logger() {
         val myObject = Register(
-            type = spinnerType.selectedItem.toString(),
-            detail = spinnerDetail.selectedItem.toString(),
-            value = editTextValue.text.toString(),
-            date = editTextDate.text.toString(),
+            type = binding.spinnerType.selectedItem.toString(),
+            detail = binding.spinnerDetail.selectedItem.toString(),
+            value = binding.editTextValue.text.toString(),
+            date = binding.editTextDate.text.toString(),
         )
 
         Log.d("Register", myObject.toString())
