@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import java.text.NumberFormat
+import java.util.Calendar
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -104,13 +105,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun handleOpenDatePicker(view: View) {
+
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
         val dateDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
                 val dateFormatted = "${selectedDay}/${selectedMonth + 1}/${selectedYear}"
                 binding.editTextDate.setText(dateFormatted)
             },
-            2024, 8, 5
+            year, month, day
         )
 
         dateDialog.show()
