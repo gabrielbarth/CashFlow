@@ -160,9 +160,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun showCurrentBalanceDialog(currentBalance: Double) {
+    private fun showCurrentBalanceDialog(currentBalance: String) {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Saldo atual")
+        builder.setTitle("Saldo atual (créditos - débitos)")
         builder.setMessage("Seu saldo atual é de R$ ${currentBalance}")
 
         builder.setNegativeButton("Ok") { dialog, which ->
@@ -186,7 +186,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun handleShowCurrentBalance(view: View) {
-        val totalAmount = database.sumAmount()
+        val totalAmount = String.format("%.2f", database.sumAmount())
         showCurrentBalanceDialog(totalAmount)
     }
 

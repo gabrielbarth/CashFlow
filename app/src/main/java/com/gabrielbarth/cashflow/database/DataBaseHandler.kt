@@ -113,14 +113,23 @@ class DatabaseHandler(context: Context) :
 
     fun sumAmount(): Double {
         val db = readableDatabase
-        val cursor = db.rawQuery("SELECT SUM(CAST(amount AS REAL)) FROM $TABLE_NAME", null)
+        val cursorCredit = db.rawQuery("SELECT SUM(CAST(amount AS REAL)) FROM $TABLE_NAME WHERE type = 'Crédito'", null)
+        val cursorDebit = db.rawQuery("SELECT SUM(CAST(amount AS REAL)) FROM $TABLE_NAME WHERE type = 'Débito'", null)
 
         var totalAmount = 0.0
-        if (cursor.moveToFirst()) {
-            println(cursor.getDouble(0))
-            totalAmount = cursor.getDouble(0)
+
+        if (cursorCredit.moveToFirst()) {
+            println(cursorCredit.getDouble(0))
+            totalAmount = cursorCredit.getDouble(0)
         }
-        cursor.close()
+        cursorCredit.close()
+
+        if (cursorDebit.moveToFirst()) {
+            println(cursorDebit.getDouble(0))
+            totalAmount -= cursorDebit.getDouble(0)
+        }
+        cursorDebit.close()
+
         return totalAmount
     }
 
