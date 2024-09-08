@@ -111,6 +111,18 @@ class DatabaseHandler(context: Context) :
         return register
     }
 
+    fun sumAmount(): Double {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT SUM(CAST(amount AS REAL)) FROM $TABLE_NAME", null)
+
+        var totalAmount = 0.0
+        if (cursor.moveToFirst()) {
+            println(cursor.getDouble(0))
+            totalAmount = cursor.getDouble(0)
+        }
+        cursor.close()
+        return totalAmount
+    }
 
     companion object {
         private const val DATABASE_NAME = "dbfile.sqlite"

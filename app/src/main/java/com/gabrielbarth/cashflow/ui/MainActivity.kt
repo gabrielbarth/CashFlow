@@ -1,5 +1,6 @@
 package com.gabrielbarth.cashflow.ui
 
+import android.app.AlertDialog
 import com.gabrielbarth.cashflow.databinding.ActivityMainBinding
 import com.gabrielbarth.cashflow.database.DatabaseHandler
 import com.gabrielbarth.cashflow.entity.FinancialTransaction
@@ -104,7 +105,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
     fun handleOpenDatePicker(view: View) {
         val dateDialog = DatePickerDialog(
             this,
@@ -117,7 +117,6 @@ class MainActivity : AppCompatActivity() {
 
         dateDialog.show()
     }
-
 
     private fun validate(): Boolean {
         if (binding.editTextValue.text.isEmpty() == null ||
@@ -159,8 +158,22 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun showCurrentBalanceDialog(currentBalance: Double) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Saldo atual")
+        builder.setMessage("Seu saldo atual é de R$ ${currentBalance}")
+
+        builder.setNegativeButton("Ok") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
     fun handleShowCurrentBalance(view: View) {
-        logger()
+        val totalAmount = database.sumAmount()
+        showCurrentBalanceDialog(totalAmount)
     }
 
     private fun logger() {
